@@ -5,6 +5,7 @@
     "license": "MIT",
     "devDependencies": {
         "@types/node": "^16.11.4",
+        "@typescript-eslint/eslint-plugin": "^5.1.0",
         "@typescript-eslint/parser": "^5.1.0",
         "eslint": "^8.1.0",
         "eslint-config-prettier": "^8.3.0",
@@ -47,8 +48,8 @@
         ]
     },
     "lint-staged": {
-        "*.js": "eslint --cache --fix",
-        "*.{js,css,md,ts}": "prettier --write"
+        "*.ts": "eslint --cache --fix",
+        "*.{ts}": "prettier --write"
     },
     "scripts": {
         "prepare": "husky install",
