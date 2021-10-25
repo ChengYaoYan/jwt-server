@@ -24,8 +24,8 @@ export const verifyToken: RequestHandler = async (req, res, next) => {
       ? (isAuthenticated = true)
       : (isAuthenticated = false);
   } else {
-    res.sendStatus(403).send("Unauthenticated");
+    res.status(403).send("Unauthenticated");
   }
 
-  isAuthenticated ? next() : res.sendStatus(403).send("Unauthenticated");
+  isAuthenticated ? next() : res.status(403).send("Unauthenticated");
 };
