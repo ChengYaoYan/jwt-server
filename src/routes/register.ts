@@ -13,6 +13,7 @@ export interface ResponseData {
 }
 
 const register: RequestHandler = async (req, res) => {
+  const privateKey = process.env.PRIVATE_KEY as string;
   const user: User = {
     name: req.body.name,
     password: req.body.password,
@@ -22,7 +23,7 @@ const register: RequestHandler = async (req, res) => {
   const registerResult = await db.register(user);
 
   if (registerResult.isAcknowledged) {
-    const token = jwt.sign({ user: user }, "2021 lpl win the championship");
+    const token = jwt.sign({ user: user }, privateKey);
     data = {
       token,
       name: user.name,

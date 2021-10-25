@@ -55,35 +55,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var jwt = __importStar(require("jsonwebtoken"));
 var db = __importStar(require("../database"));
-var register = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var privateKey, user, data, registerResult, token;
+var users = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var result;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                privateKey = process.env.PRIVATE_KEY;
-                user = {
-                    name: req.body.name,
-                    password: req.body.password,
-                };
-                return [4 /*yield*/, db.register(user)];
+            case 0: return [4 /*yield*/, db.users()];
             case 1:
-                registerResult = _a.sent();
-                if (registerResult.isAcknowledged) {
-                    token = jwt.sign({ user: user }, privateKey);
-                    data = {
-                        token: token,
-                        name: user.name,
-                    };
-                    res.json(data);
-                }
-                else {
-                    data = registerResult.message;
-                    res.send(data);
-                }
+                result = _a.sent();
+                res.json(result);
                 return [2 /*return*/];
         }
     });
 }); };
-exports.default = register;
+exports.default = users;

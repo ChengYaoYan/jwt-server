@@ -58,10 +58,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var jwt = __importStar(require("jsonwebtoken"));
 var db = __importStar(require("../database"));
 var login = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, data, loginResult, token;
+    var privateKey, user, data, loginResult, token;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
+                privateKey = process.env.PRIVATE_KEY;
                 user = {
                     name: req.body.name,
                     password: req.body.password,
@@ -70,7 +71,7 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
             case 1:
                 loginResult = _a.sent();
                 if (loginResult.isAcknowledged) {
-                    token = jwt.sign({ user: user }, "2021 lpl win the championship");
+                    token = jwt.sign({ user: user }, privateKey);
                     data = {
                         token: token,
                         name: user.name,

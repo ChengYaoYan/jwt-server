@@ -55,9 +55,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.register = void 0;
+exports.users = exports.login = exports.register = void 0;
 var mongodb = __importStar(require("mongodb"));
-var URL = 'mongodb://localhost:27017', dbName = 'jira';
+var URL = process.env.MONGODB_URL, dbName = "jira";
 var client = new mongodb.MongoClient(URL);
 function register(user) {
     return __awaiter(this, void 0, void 0, function () {
@@ -67,25 +67,29 @@ function register(user) {
                 case 0: return [4 /*yield*/, client.connect()];
                 case 1:
                     _a.sent();
-                    db = client.db('jira');
+                    db = client.db(dbName);
                     return [4 /*yield*/, db.listCollections().toArray()];
                 case 2:
                     collections = (_a.sent()).map(function (collection) { return collection.name; });
-                    if (!!collections.includes('register')) return [3 /*break*/, 4];
-                    collection = db.collection('register');
+                    if (!!collections.includes("register")) return [3 /*break*/, 4];
+                    collection = db.collection("register");
                     return [4 /*yield*/, collection.insertOne(user)];
                 case 3:
                     _a.sent();
                     result = {
                         isAcknowledged: true,
-                        message: 'register successfully',
+                        message: "register successfully",
                     };
                     return [3 /*break*/, 8];
                 case 4:
-                    collection = db.collection('register');
-                    return [4 /*yield*/, collection.findOne({ name: "" + user.name })];
+                    collection = db.collection("register");
+                    return [4 /*yield*/, collection.findOne({
+                            name: "" + user.name,
+                        })];
                 case 5:
-                    userIsExist = (_a.sent()) ? true : false;
+                    userIsExist = (_a.sent())
+                        ? true
+                        : false;
                     if (!userIsExist) return [3 /*break*/, 6];
                     result = {
                         isAcknowledged: false,
@@ -97,7 +101,7 @@ function register(user) {
                     _a.sent();
                     result = {
                         isAcknowledged: true,
-                        message: 'register successfully',
+                        message: "register successfully",
                     };
                     _a.label = 8;
                 case 8:
@@ -116,8 +120,8 @@ function login(user) {
                 case 0: return [4 /*yield*/, client.connect()];
                 case 1:
                     _a.sent();
-                    db = client.db('jira');
-                    collection = db.collection('register');
+                    db = client.db("jira");
+                    collection = db.collection("register");
                     return [4 /*yield*/, collection.findOne({ name: "" + user.name })];
                 case 2:
                     findResult = _a.sent();
@@ -129,8 +133,11 @@ function login(user) {
                     }
                     else {
                         findResult.password === user.password
-                            ? result = { isAcknowledged: true, message: 'login successfully' }
-                            : result = { isAcknowledged: false, message: 'username or password is falsed' };
+                            ? (result = { isAcknowledged: true, message: "login successfully" })
+                            : (result = {
+                                isAcknowledged: false,
+                                message: "username or password is falsed",
+                            });
                     }
                     client.close();
                     return [2 /*return*/, result];
@@ -139,3 +146,23 @@ function login(user) {
     });
 }
 exports.login = login;
+function users() {
+    return __awaiter(this, void 0, void 0, function () {
+        var result, db, collection;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, client.connect()];
+                case 1:
+                    _a.sent();
+                    db = client.db("jira");
+                    collection = db.collection("users");
+                    return [4 /*yield*/, collection.find({}, { projection: { '_id': 0 } }).toArray()];
+                case 2:
+                    result = (_a.sent());
+                    client.close();
+                    return [2 /*return*/, result];
+            }
+        });
+    });
+}
+exports.users = users;

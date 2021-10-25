@@ -6,7 +6,7 @@ interface MongoResult {
   message: string;
 }
 
-const URL = "mongodb://localhost:27017",
+const URL: string = process.env.MONGODB_URL as string,
   dbName = "jira";
 
 const client = new mongodb.MongoClient(URL);
@@ -15,7 +15,7 @@ export async function register(user: User): Promise<MongoResult> {
   let result: MongoResult;
 
   await client.connect();
-  const db = client.db("jira");
+  const db = client.db(dbName);
   const collections = (await db.listCollections().toArray()).map(
     (collection) => collection.name
   );
@@ -76,6 +76,21 @@ export async function login(user: User): Promise<MongoResult> {
           message: "username or password is falsed",
         });
   }
+
+  client.close();
+  return result;
+}
+
+export async function users(): Promise<User[]> {
+  let result: User[];
+
+  await client.connect();
+  const db = client.db("jira");
+
+  const collection = db.collection("users");
+  result = (await collection
+    .find({}, { projection: { _id: 0 } })
+    .toArray()) as User[];
 
   client.close();
   return result;

@@ -55,35 +55,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.verifyToken = void 0;
 var jwt = __importStar(require("jsonwebtoken"));
 var db = __importStar(require("../database"));
-var register = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var privateKey, user, data, registerResult, token;
+var privateKey = process.env.PRIVATE_KEY;
+var verifyToken = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var isAuthenticated, bearerHeader, bearerToken, payload, loginResult;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                privateKey = process.env.PRIVATE_KEY;
-                user = {
-                    name: req.body.name,
-                    password: req.body.password,
-                };
-                return [4 /*yield*/, db.register(user)];
+                isAuthenticated = false;
+                bearerHeader = req.headers["authorization"];
+                if (!(typeof bearerHeader !== "undefined")) return [3 /*break*/, 2];
+                bearerToken = bearerHeader.split(" ")[1];
+                payload = jwt.verify(bearerToken, privateKey);
+                return [4 /*yield*/, db.login(payload.user)];
             case 1:
-                registerResult = _a.sent();
-                if (registerResult.isAcknowledged) {
-                    token = jwt.sign({ user: user }, privateKey);
-                    data = {
-                        token: token,
-                        name: user.name,
-                    };
-                    res.json(data);
-                }
-                else {
-                    data = registerResult.message;
-                    res.send(data);
-                }
+                loginResult = _a.sent();
+                loginResult.isAcknowledged
+                    ? (isAuthenticated = true)
+                    : (isAuthenticated = false);
+                return [3 /*break*/, 3];
+            case 2:
+                res.status(403).send("Unauthenticated");
+                _a.label = 3;
+            case 3:
+                isAuthenticated ? next() : res.status(403).send("Unauthenticated");
                 return [2 /*return*/];
         }
     });
 }); };
-exports.default = register;
+exports.verifyToken = verifyToken;
