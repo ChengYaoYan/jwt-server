@@ -53,3 +53,30 @@ export async function register(user: User): Promise<MongoResult> {
   client.close();
   return result;
 }
+
+export async function login(user: User): Promise<MongoResult> {
+  let result: MongoResult;
+
+  await client.connect();
+  const db = client.db("jira");
+
+  const collection = db.collection("register");
+  const findResult = await collection.findOne({ name: `${user.name}` });
+
+  if (!findResult) {
+    result = {
+      isAcknowledged: false,
+      message: `${user.name} doesn't exist`,
+    };
+  } else {
+    findResult.password === user.password
+      ? (result = { isAcknowledged: true, message: "login successfully" })
+      : (result = {
+          isAcknowledged: false,
+          message: "username or password is falsed",
+        });
+  }
+
+  client.close();
+  return result;
+}

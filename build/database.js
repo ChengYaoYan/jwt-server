@@ -55,7 +55,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.register = void 0;
+exports.login = exports.register = void 0;
 var mongodb = __importStar(require("mongodb"));
 var URL = 'mongodb://localhost:27017', dbName = 'jira';
 var client = new mongodb.MongoClient(URL);
@@ -108,3 +108,34 @@ function register(user) {
     });
 }
 exports.register = register;
+function login(user) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result, db, collection, findResult;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, client.connect()];
+                case 1:
+                    _a.sent();
+                    db = client.db('jira');
+                    collection = db.collection('register');
+                    return [4 /*yield*/, collection.findOne({ name: "" + user.name })];
+                case 2:
+                    findResult = _a.sent();
+                    if (!findResult) {
+                        result = {
+                            isAcknowledged: false,
+                            message: user.name + " doesn't exist",
+                        };
+                    }
+                    else {
+                        findResult.password === user.password
+                            ? result = { isAcknowledged: true, message: 'login successfully' }
+                            : result = { isAcknowledged: false, message: 'username or password is falsed' };
+                    }
+                    client.close();
+                    return [2 /*return*/, result];
+            }
+        });
+    });
+}
+exports.login = login;

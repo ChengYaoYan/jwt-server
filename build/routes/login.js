@@ -57,8 +57,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var jwt = __importStar(require("jsonwebtoken"));
 var db = __importStar(require("../database"));
-var register = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, data, registerResult, token;
+var login = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, data, loginResult, token;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -66,10 +66,10 @@ var register = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
                     name: req.body.name,
                     password: req.body.password,
                 };
-                return [4 /*yield*/, db.register(user)];
+                return [4 /*yield*/, db.login(user)];
             case 1:
-                registerResult = _a.sent();
-                if (registerResult.isAcknowledged) {
+                loginResult = _a.sent();
+                if (loginResult.isAcknowledged) {
                     token = jwt.sign({ user: user }, "2021 lpl win the championship");
                     data = {
                         token: token,
@@ -78,11 +78,11 @@ var register = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
                     res.json(data);
                 }
                 else {
-                    data = registerResult.message;
+                    data = loginResult.message;
                     res.send(data);
                 }
                 return [2 /*return*/];
         }
     });
 }); };
-exports.default = register;
+exports.default = login;
