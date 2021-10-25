@@ -55,20 +55,56 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.connect = void 0;
+exports.register = void 0;
 var mongodb = __importStar(require("mongodb"));
-var url = 'mongodb://localhost:27017';
-var client = new mongodb.MongoClient(url);
-function connect() {
+var URL = 'mongodb://localhost:27017', dbName = 'jira';
+var client = new mongodb.MongoClient(URL);
+function register(user) {
     return __awaiter(this, void 0, void 0, function () {
+        var result, db, collections, collection, collection, userIsExist;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, client.connect()];
                 case 1:
                     _a.sent();
-                    return [2 /*return*/, client];
+                    db = client.db('jira');
+                    return [4 /*yield*/, db.listCollections().toArray()];
+                case 2:
+                    collections = (_a.sent()).map(function (collection) { return collection.name; });
+                    if (!!collections.includes('register')) return [3 /*break*/, 4];
+                    collection = db.collection('register');
+                    return [4 /*yield*/, collection.insertOne(user)];
+                case 3:
+                    _a.sent();
+                    result = {
+                        isAcknowledged: true,
+                        message: 'register successfully',
+                    };
+                    return [3 /*break*/, 8];
+                case 4:
+                    collection = db.collection('register');
+                    return [4 /*yield*/, collection.findOne({ name: "" + user.name })];
+                case 5:
+                    userIsExist = (_a.sent()) ? true : false;
+                    if (!userIsExist) return [3 /*break*/, 6];
+                    result = {
+                        isAcknowledged: false,
+                        message: user.name + " has been registered!",
+                    };
+                    return [3 /*break*/, 8];
+                case 6: return [4 /*yield*/, collection.insertOne(user)];
+                case 7:
+                    _a.sent();
+                    result = {
+                        isAcknowledged: true,
+                        message: 'register successfully',
+                    };
+                    _a.label = 8;
+                case 8:
+                    client.close();
+                    return [2 /*return*/, result];
             }
         });
     });
 }
-exports.connect = connect;
+exports.register = register;

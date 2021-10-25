@@ -1,5 +1,6 @@
 import { RequestHandler } from "express-serve-static-core";
 import * as jwt from "jsonwebtoken";
+import * as db from "../database";
 
 export interface User {
   name: string;
@@ -11,20 +12,27 @@ export interface ResponseData {
   token: string;
 }
 
-const register: RequestHandler = (req, res) => {
+const register: RequestHandler = async (req, res) => {
   const user: User = {
     name: req.body.name,
     password: req.body.password,
   };
+  let data: ResponseData | string;
 
-  const token = jwt.sign({ user: user }, "2021 lpl win the championship");
+  const registerResult = await db.register(user);
 
-  const data: ResponseData = {
-    token,
-    name: user.name,
-  };
+  if (registerResult.isAcknowledged) {
+    const token = jwt.sign({ user: user }, "2021 lpl win the championship");
+    data = {
+      token,
+      name: user.name,
+    };
 
-  res.json(data);
+    res.json(data);
+  } else {
+    data = registerResult.message;
+    res.send(data);
+  }
 };
 
 export default register;
