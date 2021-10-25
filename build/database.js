@@ -55,7 +55,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.users = exports.login = exports.register = void 0;
+exports.projects = exports.users = exports.login = exports.register = void 0;
 var mongodb = __importStar(require("mongodb"));
 var URL = process.env.MONGODB_URL, dbName = "jira";
 var client = new mongodb.MongoClient(URL);
@@ -120,7 +120,7 @@ function login(user) {
                 case 0: return [4 /*yield*/, client.connect()];
                 case 1:
                     _a.sent();
-                    db = client.db("jira");
+                    db = client.db(dbName);
                     collection = db.collection("register");
                     return [4 /*yield*/, collection.findOne({ name: "" + user.name })];
                 case 2:
@@ -154,9 +154,11 @@ function users() {
                 case 0: return [4 /*yield*/, client.connect()];
                 case 1:
                     _a.sent();
-                    db = client.db("jira");
+                    db = client.db(dbName);
                     collection = db.collection("users");
-                    return [4 /*yield*/, collection.find({}, { projection: { '_id': 0 } }).toArray()];
+                    return [4 /*yield*/, collection
+                            .find({}, { projection: { _id: 0 } })
+                            .toArray()];
                 case 2:
                     result = (_a.sent());
                     client.close();
@@ -166,3 +168,42 @@ function users() {
     });
 }
 exports.users = users;
+function projects(name, personId) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result, db, collection;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, client.connect()];
+                case 1:
+                    _a.sent();
+                    db = client.db(dbName);
+                    collection = db.collection("projects");
+                    if (!(!personId && !name)) return [3 /*break*/, 3];
+                    return [4 /*yield*/, collection.find({}, { projection: { '_id': 0 } }).toArray()];
+                case 2:
+                    result = (_a.sent());
+                    return [3 /*break*/, 9];
+                case 3:
+                    if (!(personId && !name)) return [3 /*break*/, 5];
+                    return [4 /*yield*/, collection.find({ 'personId': personId }, { projection: { '_id': 0 } }).toArray()];
+                case 4:
+                    result = (_a.sent());
+                    return [3 /*break*/, 9];
+                case 5:
+                    if (!(name && !personId)) return [3 /*break*/, 7];
+                    return [4 /*yield*/, collection.find({ 'name': "" + name }, { projection: { '_id': 0 } }).toArray()];
+                case 6:
+                    result = (_a.sent());
+                    return [3 /*break*/, 9];
+                case 7: return [4 /*yield*/, collection.find({ 'name': "" + name, 'personId': personId }, { projection: { '_id': 0 } }).toArray()];
+                case 8:
+                    result = (_a.sent());
+                    _a.label = 9;
+                case 9:
+                    client.close();
+                    return [2 /*return*/, result];
+            }
+        });
+    });
+}
+exports.projects = projects;

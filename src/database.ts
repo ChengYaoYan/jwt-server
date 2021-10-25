@@ -1,6 +1,19 @@
 import * as mongodb from "mongodb";
 import { User } from "./routes/register";
 
+export interface IUser {
+  id: number;
+  name: string;
+}
+
+export interface IProject {
+  id: number;
+  name: string;
+  personId: number;
+  organization: string;
+  created: number;
+}
+
 interface MongoResult {
   isAcknowledged: boolean;
   message: string;
@@ -58,7 +71,7 @@ export async function login(user: User): Promise<MongoResult> {
   let result: MongoResult;
 
   await client.connect();
-  const db = client.db("jira");
+  const db = client.db(dbName);
 
   const collection = db.collection("register");
   const findResult = await collection.findOne({ name: `${user.name}` });
@@ -81,16 +94,49 @@ export async function login(user: User): Promise<MongoResult> {
   return result;
 }
 
-export async function users(): Promise<User[]> {
-  let result: User[];
+export async function users(): Promise<IUser[]> {
+  let result: IUser[];
 
   await client.connect();
-  const db = client.db("jira");
+  const db = client.db(dbName);
 
   const collection = db.collection("users");
   result = (await collection
     .find({}, { projection: { _id: 0 } })
-    .toArray()) as User[];
+    .toArray()) as IUser[];
+
+  client.close();
+  return result;
+}
+
+export async function projects(
+  name?: string,
+  personId?: number
+): Promise<IProject[]> {
+  let result: IProject[];
+
+  await client.connect();
+  const db = client.db(dbName);
+
+  const collection = db.collection("projects");
+
+  if (!personId && !name) {
+    result = (await collection
+      .find({}, { projection: { _id: 0 } })
+      .toArray()) as IProject[];
+  } else if (personId && !name) {
+    result = (await collection
+      .find({ personId: personId }, { projection: { _id: 0 } })
+      .toArray()) as IProject[];
+  } else if (name && !personId) {
+    result = (await collection
+      .find({ name: `${name}` }, { projection: { _id: 0 } })
+      .toArray()) as IProject[];
+  } else {
+    result = (await collection
+      .find({ name: `${name}`, personId: personId }, { projection: { _id: 0 } })
+      .toArray()) as IProject[];
+  }
 
   client.close();
   return result;
