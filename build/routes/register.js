@@ -62,7 +62,7 @@ var register = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                privateKey = process.env.PRIVATE_KEY;
+                privateKey = "2021 lpl win the championship";
                 user = {
                     name: req.body.name,
                     password: req.body.password,

@@ -1,19 +1,13 @@
 import { RequestHandler } from "express-serve-static-core";
 import * as db from "../database";
 
-interface IPerson {
-  personId: string;
-  name: string;
-}
-
 const projects: RequestHandler = async (req, res) => {
-  const { personId, name } = req.query;
-  let personIdNum: number | undefined = undefined;
+  const { username, name } = req.query;
 
-  if (typeof personId === "string") {
-    personIdNum = parseInt(personId);
-  }
-  const result = await db.projects(name as string | undefined, personIdNum);
+  const result = await db.projects(
+    name as string | undefined,
+    username as string | undefined
+  );
 
   res.json(result);
 };

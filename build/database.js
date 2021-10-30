@@ -57,7 +57,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.projects = exports.users = exports.login = exports.register = void 0;
 var mongodb = __importStar(require("mongodb"));
-var URL = process.env.MONGODB_URL, dbName = "jira";
+// const URL: string = process.env.MONGODB_URL as string,
+// const URL = "mongodb://localhost:27017",
+var URL = "mongodb://mongo:27017", dbName = "jira";
 var client = new mongodb.MongoClient(URL);
 function register(user) {
     return __awaiter(this, void 0, void 0, function () {
@@ -148,7 +150,7 @@ function login(user) {
 exports.login = login;
 function users() {
     return __awaiter(this, void 0, void 0, function () {
-        var result, db, collection;
+        var db, collection, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, client.connect()];
@@ -168,38 +170,56 @@ function users() {
     });
 }
 exports.users = users;
-function projects(name, personId) {
+function projects(name, username) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function () {
-        var result, db, collection;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, client.connect()];
+        var result, db, projectsCollection, usersCollection, personId, personId;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    result = [];
+                    return [4 /*yield*/, client.connect()];
                 case 1:
-                    _a.sent();
+                    _c.sent();
                     db = client.db(dbName);
-                    collection = db.collection("projects");
-                    if (!(!personId && !name)) return [3 /*break*/, 3];
-                    return [4 /*yield*/, collection.find({}, { projection: { '_id': 0 } }).toArray()];
+                    projectsCollection = db.collection("projects");
+                    usersCollection = db.collection("users");
+                    if (!(username === undefined && name === undefined)) return [3 /*break*/, 3];
+                    return [4 /*yield*/, projectsCollection
+                            .find({}, { projection: { _id: 0 } })
+                            .toArray()];
                 case 2:
-                    result = (_a.sent());
-                    return [3 /*break*/, 9];
+                    result = (_c.sent());
+                    return [3 /*break*/, 11];
                 case 3:
-                    if (!(personId && !name)) return [3 /*break*/, 5];
-                    return [4 /*yield*/, collection.find({ 'personId': personId }, { projection: { '_id': 0 } }).toArray()];
+                    if (!(username !== undefined && name === undefined)) return [3 /*break*/, 6];
+                    return [4 /*yield*/, usersCollection.findOne({ name: username }, { projection: { id: 1 } })];
                 case 4:
-                    result = (_a.sent());
-                    return [3 /*break*/, 9];
+                    personId = (_a = (_c.sent())) === null || _a === void 0 ? void 0 : _a.id;
+                    return [4 /*yield*/, projectsCollection
+                            .find({ personId: personId }, { projection: { _id: 0 } })
+                            .toArray()];
                 case 5:
-                    if (!(name && !personId)) return [3 /*break*/, 7];
-                    return [4 /*yield*/, collection.find({ 'name': "" + name }, { projection: { '_id': 0 } }).toArray()];
+                    result = (_c.sent());
+                    return [3 /*break*/, 11];
                 case 6:
-                    result = (_a.sent());
-                    return [3 /*break*/, 9];
-                case 7: return [4 /*yield*/, collection.find({ 'name': "" + name, 'personId': personId }, { projection: { '_id': 0 } }).toArray()];
-                case 8:
-                    result = (_a.sent());
-                    _a.label = 9;
+                    if (!(name !== undefined && username === undefined)) return [3 /*break*/, 8];
+                    return [4 /*yield*/, projectsCollection
+                            .find({ name: "" + name }, { projection: { _id: 0 } })
+                            .toArray()];
+                case 7:
+                    result = (_c.sent());
+                    return [3 /*break*/, 11];
+                case 8: return [4 /*yield*/, usersCollection.findOne({ name: username }, { projection: { id: 1 } })];
                 case 9:
+                    personId = (_b = (_c.sent())) === null || _b === void 0 ? void 0 : _b.id;
+                    return [4 /*yield*/, projectsCollection
+                            .find({ name: "" + name, personId: personId }, { projection: { _id: 0 } })
+                            .toArray()];
+                case 10:
+                    result = (_c.sent());
+                    _c.label = 11;
+                case 11:
                     client.close();
                     return [2 /*return*/, result];
             }

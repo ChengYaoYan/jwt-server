@@ -8,7 +8,8 @@ interface JwtPayload extends jwt.JwtPayload {
   user: User;
 }
 
-const privateKey = process.env.PRIVATE_KEY as string;
+// const privateKey = process.env.PRIVATE_KEY as string;
+const privateKey = "2021 lpl win the championship";
 
 export const verifyToken: RequestHandler = async (req, res, next) => {
   let isAuthenticated: boolean = false;

@@ -19,7 +19,9 @@ interface MongoResult {
   message: string;
 }
 
-const URL: string = process.env.MONGODB_URL as string,
+// const URL: string = process.env.MONGODB_URL as string,
+// const URL = "mongodb://localhost:27017",
+const URL = "mongodb://mongo:27017",
   dbName = "jira";
 
 const client = new mongodb.MongoClient(URL);
@@ -95,13 +97,11 @@ export async function login(user: User): Promise<MongoResult> {
 }
 
 export async function users(): Promise<IUser[]> {
-  let result: IUser[];
-
   await client.connect();
   const db = client.db(dbName);
 
   const collection = db.collection("users");
-  result = (await collection
+  const result: IUser[] = (await collection
     .find({}, { projection: { _id: 0 } })
     .toArray()) as IUser[];
 
@@ -111,29 +111,44 @@ export async function users(): Promise<IUser[]> {
 
 export async function projects(
   name?: string,
-  personId?: number
+  username?: string
 ): Promise<IProject[]> {
-  let result: IProject[];
+  let result: IProject[] = [];
 
   await client.connect();
   const db = client.db(dbName);
 
-  const collection = db.collection("projects");
+  const projectsCollection = db.collection("projects");
+  const usersCollection = db.collection("users");
 
-  if (!personId && !name) {
-    result = (await collection
+  if (username === undefined && name === undefined) {
+    result = (await projectsCollection
       .find({}, { projection: { _id: 0 } })
       .toArray()) as IProject[];
-  } else if (personId && !name) {
-    result = (await collection
+  } else if (username !== undefined && name === undefined) {
+    const personId: number | null = (
+      await usersCollection.findOne(
+        { name: username },
+        { projection: { id: 1 } }
+      )
+    )?.id;
+
+    result = (await projectsCollection
       .find({ personId: personId }, { projection: { _id: 0 } })
       .toArray()) as IProject[];
-  } else if (name && !personId) {
-    result = (await collection
+  } else if (name !== undefined && username === undefined) {
+    result = (await projectsCollection
       .find({ name: `${name}` }, { projection: { _id: 0 } })
       .toArray()) as IProject[];
   } else {
-    result = (await collection
+    const personId: number | null = (
+      await usersCollection.findOne(
+        { name: username },
+        { projection: { id: 1 } }
+      )
+    )?.id;
+
+    result = (await projectsCollection
       .find({ name: `${name}`, personId: personId }, { projection: { _id: 0 } })
       .toArray()) as IProject[];
   }

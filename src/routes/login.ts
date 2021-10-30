@@ -4,7 +4,8 @@ import * as db from "../database";
 import { User, ResponseData } from "./register";
 
 const login: RequestHandler = async (req, res) => {
-  const privateKey = process.env.PRIVATE_KEY as string;
+  // const privateKey = process.env.PRIVATE_KEY as string;
+  const privateKey = "2021 lpl win the championship";
   const user: User = {
     name: req.body.name,
     password: req.body.password,

@@ -57,16 +57,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var db = __importStar(require("../database"));
 var projects = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, personId, name, personIdNum, result;
+    var _a, username, name, result;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = req.query, personId = _a.personId, name = _a.name;
-                personIdNum = undefined;
-                if (typeof personId === 'string') {
-                    personIdNum = parseInt(personId);
-                }
-                return [4 /*yield*/, db.projects(name, personIdNum)];
+                _a = req.query, username = _a.username, name = _a.name;
+                return [4 /*yield*/, db.projects(name, username)];
             case 1:
                 result = _b.sent();
                 res.json(result);

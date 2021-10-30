@@ -58,7 +58,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyToken = void 0;
 var jwt = __importStar(require("jsonwebtoken"));
 var db = __importStar(require("../database"));
-var privateKey = process.env.PRIVATE_KEY;
+// const privateKey = process.env.PRIVATE_KEY as string;
+var privateKey = "2021 lpl win the championship";
 var verifyToken = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var isAuthenticated, bearerHeader, bearerToken, payload, loginResult;
     return __generator(this, function (_a) {
