@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+src
+tsconfig.json
+.husky
+.eslintcache
+.gitignore
+.prettierignore
+.prettierrc.json
