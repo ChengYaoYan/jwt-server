@@ -80,7 +80,7 @@ var register = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
                 }
                 else {
                     data = registerResult.message;
-                    res.send(data);
+                    res.status(403).send(data);
                 }
                 return [2 /*return*/];
         }

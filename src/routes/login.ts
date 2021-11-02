@@ -24,7 +24,7 @@ const login: RequestHandler = async (req, res) => {
     res.json(data);
   } else {
     data = loginResult.message;
-    res.send(data);
+    res.status(403).send(data);
   }
 };
 

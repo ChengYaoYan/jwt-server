@@ -33,7 +33,7 @@ const register: RequestHandler = async (req, res) => {
     res.json(data);
   } else {
     data = registerResult.message;
-    res.send(data);
+    res.status(403).send(data);
   }
 };
 
